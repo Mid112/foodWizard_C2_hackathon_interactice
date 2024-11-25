@@ -118,8 +118,10 @@
         }
 
         #button {
-            width: 20px;
-            height: 20px;
+            width: 32px;
+            height: 32px;
+            top: 14px;
+            left: 130px;
         }
 
         #piston {
@@ -222,6 +224,7 @@
         let iconCount = 0;
         const fridge2Container = document.querySelector('.fridge2-container');
         const fridge3Container = document.querySelector('.fridge3-container');
+        const pistoContainer = document.querySelector('.pisto-container');
 
         let dataset = []; // Initialize dataset as an array
 
@@ -422,6 +425,21 @@
     let isDragging = false;
     let initialX, initialY, offsetX, offsetY;
 
+    document.addEventListener('mousedown', function() {
+
+const rect = shape.getBoundingClientRect();
+const containerRect = pistoContainer.getBoundingClientRect();
+
+if (rect.right < containerRect.left || rect.left > containerRect.right || rect.bottom < containerRect.top || rect.top > containerRect.bottom) {
+    // Apply transformation to piston when icon is dragged outside
+    piston.style.transition = 'transform 1s ease-in-out';
+    piston.style.transformOrigin = 'center top';
+    piston.style.transform = 'rotateX(0deg)';
+
+    
+}
+});
+
     shape.addEventListener('mousedown', function(event) {
         isDragging = true;
         initialX = event.clientX;
@@ -445,18 +463,23 @@
             const storageType = getStorageType(shape); // Pass the shape element
             const foodItem = shape.dataset.foodItem;
             const startLife = getStartLife(foodItem); // Fetch the start life value
-
+            
             // Call fetchEndLife when the storage type changes
             fetchEndLife(foodItem, storageType, startLife)
                 .then(endLife => {
                     updateEntryInDataset(foodItem, storageType, endLife);
                 });
+    
+            
 
             isDragging = false;
             shape.style.zIndex = '2'; // Reset the shape's z-index after dragging
         }
     });
-}
+
+
+
+    }
 
 
         function getStartLife(foodItem) {
